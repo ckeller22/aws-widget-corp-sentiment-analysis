@@ -7,7 +7,7 @@ frameworkVersion: "3"
 provider:
   name: aws
   stage: dev
-  runtime: python3.9
+  runtime: python3.11
   iam:
     role:
       statements:
@@ -45,7 +45,7 @@ resources:
 
 plugins:
   - serverless-s3-sync
-
+  - serverless-python-requirements
 custom:
   s3Sync:
     - bucketName: widget-corp-sentiment-analysis-assets-${self:provider.stage}

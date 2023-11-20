@@ -16,6 +16,7 @@ var/
 .installed.cfg
 *.egg
 assets/
+__pycache__/
 
 # Dependency directories
 node_modules/
