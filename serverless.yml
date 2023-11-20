@@ -2,12 +2,52 @@ org: ckeller22
 app: aws-widget-corp-sentiment-analysis
 service: aws-widget-corp-sentiment-analysis
 
-frameworkVersion: '3'
+frameworkVersion: "3"
 
 provider:
   name: aws
   runtime: python3.9
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action:
+            - s3:GetObject
+          Resource:
+            - arn:aws:s3:::widget-corp-sentiment-analysis-assets-${self:provider.stage}/*
+            - arn:aws:s3:::widget-corp-sentiment-analysis-assets-${self:provider.stage}
 
 functions:
   hello:
     handler: handler.hello
+
+resources:
+  Resources:
+    AssetsBucket:
+      Type: AWS::S3::Bucket
+      Properties:
+        BucketName: widget-corp-sentiment-analysis-assets-${self:provider.stage}
+        Description: S3 bucket for storing generated models
+        AccessControl: Private
+        PublicAccessBlockConfiguration:
+          BlockPublicAcls: true
+          BlockPublicPolicy: true
+          IgnorePublicAcls: true
+          RestrictPublicBuckets: true
+        BucketEncryption:
+          ServerSideEncryptionConfiguration:
+            - ServerSideEncryptionByDefault:
+                SSEAlgorithm: AES256
+
+Outputs:
+  AssetsBucketName:
+    Description: Generated s3 bucket.
+    Value: widget-corp-sentiment-analysis-assets-${self:provider.stage}
+
+plugins:
+  - serverless-s3-sync
+
+custom:
+  s3Sync:
+    - bucketName: widget-corp-sentiment-analysis-assets-${self:provider.stage}
+      localDir: assets
