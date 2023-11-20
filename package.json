@@ -1,5 +1,5 @@
 {
-  "dependencies": {
+  "devDependencies": {
     "serverless-s3-sync": "^3.2.0"
   }
 }

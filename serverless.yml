@@ -6,6 +6,7 @@ frameworkVersion: "3"
 
 provider:
   name: aws
+  stage: dev
   runtime: python3.9
   iam:
     role:
@@ -27,7 +28,6 @@ resources:
       Type: AWS::S3::Bucket
       Properties:
         BucketName: widget-corp-sentiment-analysis-assets-${self:provider.stage}
-        Description: S3 bucket for storing generated models
         AccessControl: Private
         PublicAccessBlockConfiguration:
           BlockPublicAcls: true
@@ -38,11 +38,10 @@ resources:
           ServerSideEncryptionConfiguration:
             - ServerSideEncryptionByDefault:
                 SSEAlgorithm: AES256
-
-Outputs:
-  AssetsBucketName:
-    Description: Generated s3 bucket.
-    Value: widget-corp-sentiment-analysis-assets-${self:provider.stage}
+  Outputs:
+    AssetsBucketName:
+      Description: Generated s3 bucket.
+      Value: widget-corp-sentiment-analysis-assets-${self:provider.stage}
 
 plugins:
   - serverless-s3-sync
