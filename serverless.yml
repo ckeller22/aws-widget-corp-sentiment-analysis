@@ -19,8 +19,8 @@ provider:
             - arn:aws:s3:::widget-corp-sentiment-analysis-assets-${self:provider.stage}
 
 functions:
-  hello:
-    handler: handler.hello
+  analyze:
+    handler: sentiment.analyze
 
 resources:
   Resources:
