@@ -1,7 +1,9 @@
 import json
+import os
 import pickle
 import logging
-from nltk import download
+import boto3
+import nltk
 from nltk.corpus import stopwords
 from nltk.stem.lancaster import LancasterStemmer
 from nltk import everygrams
@@ -17,27 +19,41 @@ INPUT = 'input: {}...'
 SENTIMENT = 'sentiment: {}'
 ERROR = 'error: {}'
 
-# Logger setup
-logger = logging.getLogger()
-logger.setLevel(logging.INFO)
+def setup_logger():
+    """Setup the logger."""
+    logger = logging.getLogger()
+    logger.setLevel(logging.INFO)
+    return logger
 
-# NLTK setup
-logger.info('Setting up NLTK')
-download('punkt')
-download('stopwords')
+logger = setup_logger()
+
+def load_nltk():
+    """Load NLTK resources."""
+    logger.info('Setting up NLTK')
+    
+    nltk.data.path.append("/tmp")
+    nltk.download('punkt', download_dir='/tmp')
+    nltk.download('stopwords', download_dir='/tmp')
+    
+    logger.info('NLTK setup complete')
+
+load_nltk()
+
 stopword_list = stopwords.words('english')
 stemmer = LancasterStemmer()
-logger.info('NLTK setup complete')
 
-def load_model(path):
-    """Load the sentiment analysis model from a pickle file."""
-    logger.info('Attempting to load model from {}'.format(path))
-    with open(path, 'rb') as file:
-        model = pickle.load(file)
+def load_model():
+    """Load the sentiment analysis model from S3 bucket."""
+    logger.info('Attempting to retrieve model from S3')
+    
+    client = boto3.client('s3', region_name=os.environ['AWS_REGION'])
+    model_file = client.get_object(Bucket=os.environ['AWS_S3_BUCKET_NAME'], Key=os.environ['AWS_MODEL_FILE_NAME'])
+    model = pickle.loads(model_file['Body'].read())
+    
     logger.info('Model loaded successfully')
     return model
 
-model = load_model(MODEL_PATH)
+model = load_model()
 
 def extract_features(input_string):
     """Extract features from the input string for sentiment analysis."""

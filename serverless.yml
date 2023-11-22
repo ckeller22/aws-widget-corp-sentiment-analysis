@@ -8,6 +8,9 @@ provider:
   name: aws
   stage: dev
   runtime: python3.11
+  environment:
+    AWS_S3_BUCKET_NAME: widget-corp-sentiment-analysis-assets-${self:provider.stage}
+    AWS_MODEL_FILE_NAME: sa_classifier.pickle
   iam:
     role:
       statements:
@@ -21,6 +24,8 @@ provider:
 functions:
   analyze:
     handler: sentiment.analyze
+    timeout: 180
+    memorySize: 3008
 
 resources:
   Resources:
@@ -50,3 +55,8 @@ custom:
   s3Sync:
     - bucketName: widget-corp-sentiment-analysis-assets-${self:provider.stage}
       localDir: assets
+  pythonRequirements:
+    dockerizePip: non-linux
+    useDownloadCache: false
+    useStaticCache: false
+    usePipenv: false
