@@ -25,7 +25,7 @@ functions:
   analyze:
     handler: sentiment.analyze
     timeout: 180
-    memorySize: 3008
+    memorySize: 5000
 
 resources:
   Resources:

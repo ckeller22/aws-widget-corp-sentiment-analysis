@@ -1,4 +1,3 @@
-import json
 import os
 import pickle
 import logging
@@ -15,6 +14,7 @@ MODEL_PATH = './assets/sa_classifier.pickle'
 STATUS_CODE_KEY = "statusCode"
 BODY_KEY = "body"
 REVIEW_KEY = "review"
+SENTIMENT_KEY = "sentiment"
 INPUT = 'input: {}...'
 SENTIMENT = 'sentiment: {}'
 ERROR = 'error: {}'
@@ -91,10 +91,10 @@ def analyze(event, context):
         logger.info(SENTIMENT.format(sentiment))
         
         data = {
-            SENTIMENT: sentiment,
+            SENTIMENT_KEY: sentiment,
         }
 
-        return {STATUS_CODE_KEY: 200, BODY_KEY: json.dumps(data)}
+        return {STATUS_CODE_KEY: 200, BODY_KEY: data}
     except Exception as e:
         logger.error(ERROR.format(e))
         return {STATUS_CODE_KEY: 500, BODY_KEY: "There was an error processing your request."}
